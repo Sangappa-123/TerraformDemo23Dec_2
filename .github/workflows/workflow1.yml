@@ -4,6 +4,9 @@ on:
   workflow_dispatch:
     branches:
       - main
+  push:
+    tags:
+      - "v*"
 
 jobs:
   workflow1:
