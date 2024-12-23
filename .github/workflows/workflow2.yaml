@@ -1,0 +1,32 @@
+name: Complete Terraform Workflow
+
+on:
+  workflow_run:
+    workflows:
+      - workflow1
+    types:
+      - completed
+
+jobs:
+  terraform-apply:
+    runs-on: ubuntu-latest
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    - name: Setup Terraform
+      uses: hashicorp/setup-terraform@v2
+      with:
+        terraform_version: 1.5.0
+
+    - name: Configure AWS credentials
+      uses: aws-actions/configure-aws-credentials@v3
+      with:
+        role-to-assume: arn:aws:iam::${{secrets.ACCOUNT_ID}}:role/${{secrets.ROLE_NAME}}
+        aws-region: us-east-1
+
+    - name: Terraform Init
+      run: terraform init
+
+    - name: Terraform Apply
+      run: terraform apply -auto-approve
